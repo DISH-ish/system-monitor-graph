@@ -16,39 +16,148 @@
         "options" : {
             "CPU" : "cpu",
             "RAM" : "ram",
+            "Swap" : "swap",
             "HDD" : "hdd",
+            "GPU" : "gpu",
+            "Network" : "network",
             "TEMP" : "temp"
         }
     },
-    "temp-type": {
-        "type": "filechooser",
-        "default": "/sys/class/hwmon/hwmon4/temp1_input",
-        "description": "File to monitor",
-        "tooltip": "Select a file to monitor",
-        "allow-none" : false,
-        "select-dir" : false,
-        "dependency": "type=temp"
-    },
-    "temp-scale": {
-    "type": "combobox",
-    "default": 1000,
-    "description": "Temperature scaling",
-    "tooltip": "Divide raw value by this number (1000 for millidegrees, 1 for degrees)",
-    "options": {
-        "Degrees Celsius": 1,
-        "Millidegrees (hwmon)": 1000
+    "data-prefix-ram": {
+        "type": "combobox",
+        "default": 0,
+        "options": {
+            "Binary prefix or IEC (1 GiB = 1024³ bytes)" : 0,
+            "Decimal prefix (1 GB = 1000³ bytes)" : 1
         },
-    "dependency": "type=temp"
+        "description": "Prefix for data units",
+        "tooltip": "Unit prefix for RAM size.",
+        "dependency": "type=ram"
+    },
+    "data-prefix-swap": {
+        "type": "combobox",
+        "default": 0,
+        "options": {
+            "Binary prefix or IEC (1 GiB = 1024³ bytes)" : 0,
+            "Decimal prefix (1 GB = 1000³ bytes)" : 1
+        },
+        "description": "Prefix for data units",
+        "tooltip": "Unit prefix for Swap size.",
+        "dependency": "type=swap"
+    },
+    "data-prefix-hdd": {
+        "type": "combobox",
+        "default": 0,
+        "options": {
+            "Binary prefix or IEC (1 GiB = 1024³ bytes)" : 0,
+            "Decimal prefix (1 GB = 1000³ bytes)" : 1
+        },
+        "description": "Prefix for data units",
+        "tooltip": "Unit prefix for Filesystem size.",
+        "dependency": "type=hdd"
+    },
+    "data-prefix-network": {
+        "type": "combobox",
+        "default": 0,
+        "options": {
+            "Bytes - Binary prefix or IEC (1 KiB = 1024 bytes)" : 0,
+            "Bytes - Decimal prefix (1 KB = 1000 bytes)" : 1,
+            "Bits - Decimal prefix (1 Kb = 1000 bits)" : 2
+        },
+        "description": "Prefix for data units",
+        "tooltip": "Unit prefix for network speed.",
+        "dependency": "type=network"
+    },
+    "network-interface": {
+        "type": "entry",
+        "default": "",
+        "description": "Network interface to monitor",
+        "tooltip": "Leave empty to monitor all interfaces combined. Examples: eth0, wlan0, enp0s3",
+        "dependency": "type=network"
     },
     "filesystem": {
         "type": "filechooser",
-        "default": "/",
+        "default": "file:///",
         "description": "Filesystem to monitor",
         "tooltip": "Select a directory in the filesystem to monitor.",
         "allow-none" : true,
         "select-dir" : true,
         "dependency": "type=hdd"
     },
+    "filesystem-label": {
+        "type": "entry",
+        "default": "",
+        "description": "Filesystem label",
+        "tooltip": "Empty uses the filesystem name from df.",
+        "dependency": "type=hdd"
+    },
+    "gpu-manufacturer": {
+        "type": "combobox",
+        "default": "nvidia",
+        "description": "GPU manufacturer",
+        "tooltip": "Select the GPU manufacturer.",
+        "options" : {
+            "NVIDIA" : "nvidia",
+            "AMDGPU" : "amdgpu"
+        },
+        "dependency": "type=gpu"
+    },
+    "gpu-id": {
+        "type": "entry",
+        "default": "0",
+        "description": "Id of GPU to monitor",
+        "tooltip": "Check GPU id with nvidia-smi -L",
+        "dependency": "type=gpu"
+    },
+    "gpu-variable": {
+        "type": "combobox",
+        "default": "usage",
+        "description": "GPU variable to monitor",
+        "tooltip": "Select the GPU variable to monitor.",
+        "options" : {
+            "Usage"  : "usage",
+            "Memory" : "memory"
+        },
+        "dependency": "type=gpu"
+    },
+    "data-prefix-gpumem": {
+        "type": "combobox",
+        "default": 0,
+        "options": {
+            "Binary prefix or IEC (1 GiB = 1024³ bytes)" : 0,
+            "Decimal prefix (1 GB = 1000³ bytes)" : 1
+        },
+        "description": "Prefix for data units",
+        "tooltip": "Unit prefix for GPU memory size.",
+        "dependency": "type=gpu"
+    },
+	"temp-type": {
+	    "type": "filechooser",
+	    "default": "file:///sys/class/hwmon/hwmon2/temp1_input",
+	    "description": "Temperature sensor file",
+	    "tooltip": "Select temperature sensor file (e.g., /sys/class/hwmon/hwmon*/temp*_input)",
+	    "allow-none" : false,
+	    "select-dir" : false,
+	    "dependency": "type=temp"
+	},
+	"temp-scale": {
+	    "type": "combobox",
+	    "default": 1000,
+	    "description": "Temperature scaling",
+	    "tooltip": "Divide raw value by this number",
+	    "options": {
+	        "Millidegrees (divide by 1000)": 1000,
+	        "Degrees (use as-is)": 1
+	    },
+	    "dependency": "type=temp"
+	},
+	"temp-label": {
+		"type": "entry",
+		"default": "CPU",
+		"description": "Temperature label",
+		"tooltip": "Of what is the temperature",
+		"dependency": "type=temp"
+	},
     "duration": {
         "type": "combobox",
         "default": 60,
@@ -110,6 +219,13 @@
         "dependency": "type=ram",
         "tooltip": "RGB or RGBA. Alpha is ignored"
     },
+    "line-color-swap": {
+        "type": "colorchooser",
+        "default": "rgba(229,165,10,1.0)",
+        "description": "Line color Swap",
+        "dependency": "type=swap",
+        "tooltip": "RGB or RGBA. Alpha is ignored"
+    },
     "line-color-hdd": {
         "type": "colorchooser",
         "default": "rgba(197,86,33,1.0)",
@@ -117,12 +233,33 @@
         "dependency": "type=hdd",
         "tooltip": "RGB or RGBA. Alpha is ignored"
     },
+    "line-color-gpu": {
+        "type": "colorchooser",
+        "default": "rgba(197,86,133,1.0)",
+        "description": "Line color GPU",
+        "dependency": "type=gpu",
+        "tooltip": "RGB or RGBA. Alpha is ignored"
+    },
+    "line-color-network-down": {
+        "type": "colorchooser",
+        "default": "rgba(100,180,120,1.0)",
+        "description": "Line color Network Download",
+        "dependency": "type=network",
+        "tooltip": "RGB or RGBA. Alpha is ignored"
+    },
+    "line-color-network-up": {
+        "type": "colorchooser",
+        "default": "rgba(180,120,100,1.0)",
+        "description": "Line color Network Upload",
+        "dependency": "type=network",
+        "tooltip": "RGB or RGBA. Alpha is ignored"
+    },
     "line-color-temp": {
-    "type": "colorchooser",
-    "default": "rgba(255, 100, 100, 1.0)",
-    "description": "Line color TEMP",
-    "dependency": "type=temp",
-    "tooltip": "RGB or RGBA. Alpha is ignored"
+        "type": "colorchooser",
+        "default": "rgba(255, 100, 100, 1.0)",
+        "description": "Line color Temperature",
+        "dependency": "type=temp",
+        "tooltip": "RGB or RGBA. Alpha is ignored"
     },
     "midline-color": {
         "type": "colorchooser",
