@@ -16,16 +16,18 @@
         "options" : {
             "CPU" : "cpu",
             "RAM" : "ram",
-            "HHD" : "hdd"
+            "HHD" : "hdd",
             "TEMP" : "temp"
         }
     },
     "temp-type": {
         "type": "filechooser",
         "default": "/sys/class/hwmon/hwmon4/temp1_input",
+        "description": "File to monitor",
+        "tooltip": "Select a file to monitor",
         "allow-none" : false,
         "select-dir" : false,
-        "dependency": "type=temp",
+        "dependency": "type=temp"
     },
     "filesystem": {
         "type": "filechooser",
