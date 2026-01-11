@@ -17,7 +17,15 @@
             "CPU" : "cpu",
             "RAM" : "ram",
             "HHD" : "hdd"
+            "TEMP" : "temp"
         }
+    },
+    "temp-type": {
+        "type": "filechooser",
+        "default": "/sys/class/hwmon/hwmon4/temp1_input",
+        "allow-none" : false,
+        "select-dir" : false,
+        "dependency": "type=temp",
     },
     "filesystem": {
         "type": "filechooser",
