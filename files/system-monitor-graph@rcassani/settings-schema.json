@@ -29,6 +29,17 @@
         "select-dir" : false,
         "dependency": "type=temp"
     },
+    "temp-scale": {
+    "type": "combobox",
+    "default": 1000,
+    "description": "Temperature scaling",
+    "tooltip": "Divide raw value by this number (1000 for millidegrees, 1 for degrees)",
+    "options": {
+        "Degrees Celsius": 1,
+        "Millidegrees (hwmon)": 1000
+        },
+    "dependency": "type=temp"
+    },
     "filesystem": {
         "type": "filechooser",
         "default": "/",
@@ -105,6 +116,13 @@
         "description": "Line color HDD",
         "dependency": "type=hdd",
         "tooltip": "RGB or RGBA. Alpha is ignored"
+    },
+    "line-color-temp": {
+    "type": "colorchooser",
+    "default": "rgba(255, 100, 100, 1.0)",
+    "description": "Line color TEMP",
+    "dependency": "type=temp",
+    "tooltip": "RGB or RGBA. Alpha is ignored"
     },
     "midline-color": {
         "type": "colorchooser",
