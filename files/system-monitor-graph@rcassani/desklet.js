@@ -43,7 +43,10 @@ MyDesklet.prototype = {
         this.settings.bindProperty(Settings.BindingDirection.IN, "line-color-cpu", "line_color_cpu", this.on_setting_changed);
         this.settings.bindProperty(Settings.BindingDirection.IN, "line-color-ram", "line_color_ram", this.on_setting_changed);
         this.settings.bindProperty(Settings.BindingDirection.IN, "line-color-hdd", "line_color_hdd", this.on_setting_changed);
-
+        this.settings.bindProperty(Settings.BindingDirection.IN, "temp-type", "temp_type", this.on_setting_changed);
+        this.settings.bindProperty(Settings.BindingDirection.IN, "temp-scale", "temp_scale", this.on_setting_changed);
+        this.settings.bindProperty(Settings.BindingDirection.IN, "line-color-temp", "line_color_temp", this.on_setting_changed);
+      
         // initialize desklet GUI
         this.setupUI();
     },
@@ -92,6 +95,8 @@ MyDesklet.prototype = {
                   break;
               case "hdd":
                   this.line_color = this.line_color_hdd;
+              case "temp":
+                  this.line_color = this.line_color_temp;
             }
             this.first_run = false;
         }
@@ -151,7 +156,14 @@ MyDesklet.prototype = {
               text2 = Math.round(hdd_use).toString() + "%"
               text3 = hdd_values[3].toFixed(0) + " GB free of "
                     + hdd_values[2].toFixed(0) + " GB";
-
+            
+          case "temp":
+              let temp_value = this.get_temperature();
+              let max_temp = 100; 
+              value = Math.min(temp_value, max_temp) / max_temp;
+              text1 = "TEMP";
+              text2 = temp_value.toFixed(1) + "°C";
+              text3 = this.temp_type.split('/').pop();
 
               break;
         }
@@ -322,6 +334,14 @@ MyDesklet.prototype = {
       this.hdd_hdd_tot = hdd_hdd_tot;
 
       return hdd_use;
+    },
+
+    get_temperature: function() {
+        // Read the temperature file
+      let content = Cinnamon.get_file_contents_utf8_sync(this.temp_type).trim();
+      let temp_raw = parseFloat(content);
+      let temp_scaled = temp_raw / this.temp_scale;
+      return temp_scaled;
     },
 
     parse_rgba_seetings: function(color_str) {
